@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Scout</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#111;color:#fff}
+header{background:#1c1c1c;padding:20px;text-align:center}
+h1{margin:0;font-size:28px}
+.container{padding:15px}
+.card{background:#1d1d1d;border-radius:15px;padding:15px;margin-bottom:15px}
+input,button{width:100%;box-sizing:border-box;padding:13px;margin:6px 0;border-radius:10px;border:0;font-size:16px}
+button{background:#fff;color:#111;font-weight:bold}
+.score{font-size:25px;font-weight:bold}
+.good{color:#42e66b}
+.warn{color:#ffd43b}
+.bad{color:#ff5252}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏀 Card Scout</h1>
+<p>Find undervalued cards & PSA 10 candidates</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<h2>Scan a Card</h2>
+
+<input id="player" placeholder="Player name">
+<input id="price" type="number" placeholder="Purchase price">
+<input id="sales" type="number" placeholder="Typical sale price">
+<input id="centering" type="number" min="0" max="100" placeholder="Centering score 0-100">
+<input id="condition" type="number" min="0" max="100" placeholder="Condition score 0-100">
+
+<button onclick="analyze()">Analyze Card</button>
+</div>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+function analyze(){
+
+let player=document.getElementById("player").value;
+let price=parseFloat(document.getElementById("price").value)||0;
+let sales=parseFloat(document.getElementById("sales").value)||0;
+let centering=parseFloat(document.getElementById("centering").value)||0;
+let condition=parseFloat(document.getElementById("condition").value)||0;
+
+let discount= sales>0 ? ((sales-price)/sales)*100 : 0;
+let score=(centering*.5)+(condition*.5);
+
+let rating="";
+let cls="";
+
+if(score>=95 && discount>=30){
+rating="🔥 STRONG BUY";
+cls="good";
+}else if(score>=90 && discount>=15){
+rating="🟢 GOOD BUY";
+cls="good";
+}else if(score>=85){
+rating="🟡 MAYBE";
+cls="warn";
+}else{
+rating="🔴 PASS";
+cls="bad";
+}
+
+document.getElementById("result").innerHTML=`
+<div class="card">
+<h2>${player || "Card"}</h2>
+
+<p>Purchase Price: <b>$${price.toFixed(2)}</b></p>
+<p>Typical Sale: <b>$${sales.toFixed(2)}</b></p>
+<p>Discount: <b>${discount.toFixed(1)}%</b></p>
+
+<hr>
+
+<p>Centering: <b>${centering}/100</b></p>
+<p>Condition: <b>${condition}/100</b></p>
+
+<p>PSA 10 Potential</p>
+<div class="score ${cls}">${score.toFixed(1)}/100</div>
+
+<h2 class="${cls}">${rating}</h2>
+</div>
+`;
+}
+</script>
+
+</body>
+</html>
